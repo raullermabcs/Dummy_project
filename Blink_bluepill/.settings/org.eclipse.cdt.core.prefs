@@ -1,0 +1,12 @@
+eclipse.preferences.version=1
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/GCC_PATH/delimiter=;
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/GCC_PATH/operation=replace
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/GCC_PATH/value=/c/compilers/arm-none-eabi/11.2_2022.02/bin
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/PATH/delimiter=;
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/PATH/operation=replace
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/PATH/value=C\:/Users/lermar/.p2/pool/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.8.v20230831-1047/jre/bin/server;C\:/Users/lermar/.p2/pool/plugins/org.eclipse.justj.openjdk.hotspot.jre.full.win32.x86_64_17.0.8.v20230831-1047/jre/bin;C\:\\Windows\\system32;C\:\\Windows;C\:\\Windows\\System32\\Wbem;C\:\\Windows\\System32\\WindowsPowerShell\\v1.0\\;C\:\\Windows\\System32\\OpenSSH\\;C\:\\Program Files\\dotnet\\;C\:\\Program Files (x86)\\STMicroelectronics\\STM32 ST-LINK Utility\\ST-LINK Utility;C\:\\Users\\lermar\\AppData\\Local\\Programs\\Python\\Python311\\Scripts\\;C\:\\Users\\lermar\\AppData\\Local\\Programs\\Python\\Python311\\;C\:\\Users\\lermar\\AppData\\Local\\Microsoft\\WindowsApps;;C\:\\Users\\lermar\\AppData\\Local\\Programs\\Microsoft VS Code\\bin;C\:\\Users\\lermar\\eclipse\\embedcpp-2023-09\\eclipse;C\:\\msys64\\usr\\bin
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/append=true
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/appendContributed=true
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/jlink_path/delimiter=;
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/jlink_path/operation=append
+environment/project/ilg.gnuarmeclipse.managedbuild.cross.toolchain.base.612870688/jlink_path/value=C\:\\SEGGER\\JLink
