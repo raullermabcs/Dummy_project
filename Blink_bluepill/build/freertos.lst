@@ -1,0 +1,837 @@
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 1
+
+
+   1              		.cpu cortex-m3
+   2              		.arch armv7-m
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.file	"freertos.c"
+  14              		.text
+  15              	.Ltext0:
+  16              		.cfi_sections	.debug_frame
+  17              		.section	.text.StartDefaultTask,"ax",%progbits
+  18              		.align	1
+  19              		.global	StartDefaultTask
+  20              		.syntax unified
+  21              		.thumb
+  22              		.thumb_func
+  24              	StartDefaultTask:
+  25              	.LFB70:
+  26              		.file 1 "Core/Src/freertos.c"
+   1:Core/Src/freertos.c **** /* USER CODE BEGIN Header */
+   2:Core/Src/freertos.c **** /**
+   3:Core/Src/freertos.c ****   ******************************************************************************
+   4:Core/Src/freertos.c ****   * File Name          : freertos.c
+   5:Core/Src/freertos.c ****   * Description        : Code for freertos applications
+   6:Core/Src/freertos.c ****   ******************************************************************************
+   7:Core/Src/freertos.c ****   * @attention
+   8:Core/Src/freertos.c ****   *
+   9:Core/Src/freertos.c ****   * Copyright (c) 2023 STMicroelectronics.
+  10:Core/Src/freertos.c ****   * All rights reserved.
+  11:Core/Src/freertos.c ****   *
+  12:Core/Src/freertos.c ****   * This software is licensed under terms that can be found in the LICENSE file
+  13:Core/Src/freertos.c ****   * in the root directory of this software component.
+  14:Core/Src/freertos.c ****   * If no LICENSE file comes with this software, it is provided AS-IS.
+  15:Core/Src/freertos.c ****   *
+  16:Core/Src/freertos.c ****   ******************************************************************************
+  17:Core/Src/freertos.c ****   */
+  18:Core/Src/freertos.c **** /* USER CODE END Header */
+  19:Core/Src/freertos.c **** 
+  20:Core/Src/freertos.c **** /* Includes ------------------------------------------------------------------*/
+  21:Core/Src/freertos.c **** #include "FreeRTOS.h"
+  22:Core/Src/freertos.c **** #include "task.h"
+  23:Core/Src/freertos.c **** #include "main.h"
+  24:Core/Src/freertos.c **** #include "cmsis_os.h"
+  25:Core/Src/freertos.c **** #include "adc.h"
+  26:Core/Src/freertos.c **** #include "dma.h"
+  27:Core/Src/freertos.c **** #include "usart.h"
+  28:Core/Src/freertos.c **** #include "gpio.h"
+  29:Core/Src/freertos.c **** 
+  30:Core/Src/freertos.c **** /* Private includes ----------------------------------------------------------*/
+  31:Core/Src/freertos.c **** /* USER CODE BEGIN Includes */
+  32:Core/Src/freertos.c **** 
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 2
+
+
+  33:Core/Src/freertos.c **** /* USER CODE END Includes */
+  34:Core/Src/freertos.c **** 
+  35:Core/Src/freertos.c **** /* Private typedef -----------------------------------------------------------*/
+  36:Core/Src/freertos.c **** /* USER CODE BEGIN PTD */
+  37:Core/Src/freertos.c **** 
+  38:Core/Src/freertos.c **** /* USER CODE END PTD */
+  39:Core/Src/freertos.c **** 
+  40:Core/Src/freertos.c **** /* Private define ------------------------------------------------------------*/
+  41:Core/Src/freertos.c **** /* USER CODE BEGIN PD */
+  42:Core/Src/freertos.c **** 
+  43:Core/Src/freertos.c **** /* USER CODE END PD */
+  44:Core/Src/freertos.c **** 
+  45:Core/Src/freertos.c **** /* Private macro -------------------------------------------------------------*/
+  46:Core/Src/freertos.c **** /* USER CODE BEGIN PM */
+  47:Core/Src/freertos.c **** 
+  48:Core/Src/freertos.c **** /* USER CODE END PM */
+  49:Core/Src/freertos.c **** 
+  50:Core/Src/freertos.c **** /* Private variables ---------------------------------------------------------*/
+  51:Core/Src/freertos.c **** /* USER CODE BEGIN Variables */
+  52:Core/Src/freertos.c **** 
+  53:Core/Src/freertos.c **** /* USER CODE END Variables */
+  54:Core/Src/freertos.c **** /* Definitions for defaultTask */
+  55:Core/Src/freertos.c **** osThreadId_t defaultTaskHandle;
+  56:Core/Src/freertos.c **** const osThreadAttr_t defaultTask_attributes = {
+  57:Core/Src/freertos.c ****   .name = "defaultTask",
+  58:Core/Src/freertos.c ****   .stack_size = 128 * 4,
+  59:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityLow,
+  60:Core/Src/freertos.c **** };
+  61:Core/Src/freertos.c **** /* Definitions for Blink */
+  62:Core/Src/freertos.c **** osThreadId_t BlinkHandle;
+  63:Core/Src/freertos.c **** const osThreadAttr_t Blink_attributes = {
+  64:Core/Src/freertos.c ****   .name = "Blink",
+  65:Core/Src/freertos.c ****   .stack_size = 128 * 4,
+  66:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityLow,
+  67:Core/Src/freertos.c **** };
+  68:Core/Src/freertos.c **** /* Definitions for button */
+  69:Core/Src/freertos.c **** osThreadId_t buttonHandle;
+  70:Core/Src/freertos.c **** const osThreadAttr_t button_attributes = {
+  71:Core/Src/freertos.c ****   .name = "button",
+  72:Core/Src/freertos.c ****   .stack_size = 128 * 4,
+  73:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityLow1,
+  74:Core/Src/freertos.c **** };
+  75:Core/Src/freertos.c **** /* Definitions for Potenciometer */
+  76:Core/Src/freertos.c **** osThreadId_t PotenciometerHandle;
+  77:Core/Src/freertos.c **** const osThreadAttr_t Potenciometer_attributes = {
+  78:Core/Src/freertos.c ****   .name = "Potenciometer",
+  79:Core/Src/freertos.c ****   .stack_size = 128 * 4,
+  80:Core/Src/freertos.c ****   .priority = (osPriority_t) osPriorityLow1,
+  81:Core/Src/freertos.c **** };
+  82:Core/Src/freertos.c **** 
+  83:Core/Src/freertos.c **** /* Private function prototypes -----------------------------------------------*/
+  84:Core/Src/freertos.c **** /* USER CODE BEGIN FunctionPrototypes */
+  85:Core/Src/freertos.c **** 
+  86:Core/Src/freertos.c **** /* USER CODE END FunctionPrototypes */
+  87:Core/Src/freertos.c **** 
+  88:Core/Src/freertos.c **** void StartDefaultTask(void *argument);
+  89:Core/Src/freertos.c **** void StartBlink(void *argument);
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 3
+
+
+  90:Core/Src/freertos.c **** void StartButton(void *argument);
+  91:Core/Src/freertos.c **** void StartPot(void *argument);
+  92:Core/Src/freertos.c **** 
+  93:Core/Src/freertos.c **** void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+  94:Core/Src/freertos.c **** 
+  95:Core/Src/freertos.c **** /**
+  96:Core/Src/freertos.c ****   * @brief  FreeRTOS initialization
+  97:Core/Src/freertos.c ****   * @param  None
+  98:Core/Src/freertos.c ****   * @retval None
+  99:Core/Src/freertos.c ****   */
+ 100:Core/Src/freertos.c **** void MX_FREERTOS_Init(void) {
+ 101:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 102:Core/Src/freertos.c **** 
+ 103:Core/Src/freertos.c ****   /* USER CODE END Init */
+ 104:Core/Src/freertos.c **** 
+ 105:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_MUTEX */
+ 106:Core/Src/freertos.c ****   /* add mutexes, ... */
+ 107:Core/Src/freertos.c ****   /* USER CODE END RTOS_MUTEX */
+ 108:Core/Src/freertos.c **** 
+ 109:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_SEMAPHORES */
+ 110:Core/Src/freertos.c ****   /* add semaphores, ... */
+ 111:Core/Src/freertos.c ****   /* USER CODE END RTOS_SEMAPHORES */
+ 112:Core/Src/freertos.c **** 
+ 113:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_TIMERS */
+ 114:Core/Src/freertos.c ****   /* start timers, add new ones, ... */
+ 115:Core/Src/freertos.c ****   /* USER CODE END RTOS_TIMERS */
+ 116:Core/Src/freertos.c **** 
+ 117:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_QUEUES */
+ 118:Core/Src/freertos.c ****   /* add queues, ... */
+ 119:Core/Src/freertos.c ****   /* USER CODE END RTOS_QUEUES */
+ 120:Core/Src/freertos.c **** 
+ 121:Core/Src/freertos.c ****   /* Create the thread(s) */
+ 122:Core/Src/freertos.c ****   /* creation of defaultTask */
+ 123:Core/Src/freertos.c ****   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+ 124:Core/Src/freertos.c **** 
+ 125:Core/Src/freertos.c ****   /* creation of Blink */
+ 126:Core/Src/freertos.c ****   BlinkHandle = osThreadNew(StartBlink, NULL, &Blink_attributes);
+ 127:Core/Src/freertos.c **** 
+ 128:Core/Src/freertos.c ****   /* creation of button */
+ 129:Core/Src/freertos.c ****   buttonHandle = osThreadNew(StartButton, NULL, &button_attributes);
+ 130:Core/Src/freertos.c **** 
+ 131:Core/Src/freertos.c ****   /* creation of Potenciometer */
+ 132:Core/Src/freertos.c ****   PotenciometerHandle = osThreadNew(StartPot, NULL, &Potenciometer_attributes);
+ 133:Core/Src/freertos.c **** 
+ 134:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_THREADS */
+ 135:Core/Src/freertos.c ****   /* add threads, ... */
+ 136:Core/Src/freertos.c ****   /* USER CODE END RTOS_THREADS */
+ 137:Core/Src/freertos.c **** 
+ 138:Core/Src/freertos.c ****   /* USER CODE BEGIN RTOS_EVENTS */
+ 139:Core/Src/freertos.c ****   /* add events, ... */
+ 140:Core/Src/freertos.c ****   /* USER CODE END RTOS_EVENTS */
+ 141:Core/Src/freertos.c **** 
+ 142:Core/Src/freertos.c **** }
+ 143:Core/Src/freertos.c **** 
+ 144:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartDefaultTask */
+ 145:Core/Src/freertos.c **** /**
+ 146:Core/Src/freertos.c ****   * @brief  Function implementing the defaultTask thread.
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 4
+
+
+ 147:Core/Src/freertos.c ****   * @param  argument: Not used
+ 148:Core/Src/freertos.c ****   * @retval None
+ 149:Core/Src/freertos.c ****   */
+ 150:Core/Src/freertos.c **** /* USER CODE END Header_StartDefaultTask */
+ 151:Core/Src/freertos.c **** void StartDefaultTask(void *argument)
+ 152:Core/Src/freertos.c **** {
+  27              		.loc 1 152 1 view -0
+  28              		.cfi_startproc
+  29              		@ Volatile: function does not return.
+  30              		@ args = 0, pretend = 0, frame = 8
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32              	.LVL0:
+  33              		.loc 1 152 1 is_stmt 0 view .LVU1
+  34 0000 00B5     		push	{lr}
+  35              	.LCFI0:
+  36              		.cfi_def_cfa_offset 4
+  37              		.cfi_offset 14, -4
+  38 0002 83B0     		sub	sp, sp, #12
+  39              	.LCFI1:
+  40              		.cfi_def_cfa_offset 16
+  41              	.LVL1:
+  42              	.L2:
+ 153:Core/Src/freertos.c ****   /* USER CODE BEGIN StartDefaultTask */
+ 154:Core/Src/freertos.c ****   char val;
+  43              		.loc 1 154 3 is_stmt 1 discriminator 1 view .LVU2
+ 155:Core/Src/freertos.c ****   char val2;
+  44              		.loc 1 155 3 discriminator 1 view .LVU3
+ 156:Core/Src/freertos.c ****   /* Infinite loop */
+ 157:Core/Src/freertos.c ****   for(;;)
+  45              		.loc 1 157 3 discriminator 1 view .LVU4
+ 158:Core/Src/freertos.c ****   {
+ 159:Core/Src/freertos.c **** 		HAL_UART_Transmit(&huart1,&val,1,100);
+  46              		.loc 1 159 3 discriminator 1 view .LVU5
+  47 0004 074C     		ldr	r4, .L4
+  48 0006 6423     		movs	r3, #100
+  49 0008 0122     		movs	r2, #1
+  50 000a 0DF10701 		add	r1, sp, #7
+  51 000e 2046     		mov	r0, r4
+  52 0010 FFF7FEFF 		bl	HAL_UART_Transmit
+  53              	.LVL2:
+ 160:Core/Src/freertos.c **** 		HAL_UART_Transmit(&huart1,&val2,1,100);
+  54              		.loc 1 160 3 discriminator 1 view .LVU6
+  55 0014 6423     		movs	r3, #100
+  56 0016 0122     		movs	r2, #1
+  57 0018 0DF10601 		add	r1, sp, #6
+  58 001c 2046     		mov	r0, r4
+  59 001e FFF7FEFF 		bl	HAL_UART_Transmit
+  60              	.LVL3:
+ 157:Core/Src/freertos.c ****   {
+  61              		.loc 1 157 3 discriminator 1 view .LVU7
+  62 0022 EFE7     		b	.L2
+  63              	.L5:
+  64              		.align	2
+  65              	.L4:
+  66 0024 00000000 		.word	huart1
+  67              		.cfi_endproc
+  68              	.LFE70:
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 5
+
+
+  70              		.section	.text.StartBlink,"ax",%progbits
+  71              		.align	1
+  72              		.global	StartBlink
+  73              		.syntax unified
+  74              		.thumb
+  75              		.thumb_func
+  77              	StartBlink:
+  78              	.LFB71:
+ 161:Core/Src/freertos.c ****   }
+ 162:Core/Src/freertos.c ****   /* USER CODE END StartDefaultTask */
+ 163:Core/Src/freertos.c **** }
+ 164:Core/Src/freertos.c **** 
+ 165:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartBlink */
+ 166:Core/Src/freertos.c **** /**
+ 167:Core/Src/freertos.c **** * @brief Function implementing the Blink thread.
+ 168:Core/Src/freertos.c **** * @param argument: Not used
+ 169:Core/Src/freertos.c **** * @retval None
+ 170:Core/Src/freertos.c **** */
+ 171:Core/Src/freertos.c **** /* USER CODE END Header_StartBlink */
+ 172:Core/Src/freertos.c **** void StartBlink(void *argument)
+ 173:Core/Src/freertos.c **** {
+  79              		.loc 1 173 1 view -0
+  80              		.cfi_startproc
+  81              		@ Volatile: function does not return.
+  82              		@ args = 0, pretend = 0, frame = 0
+  83              		@ frame_needed = 0, uses_anonymous_args = 0
+  84              	.LVL4:
+  85              		.loc 1 173 1 is_stmt 0 view .LVU9
+  86 0000 08B5     		push	{r3, lr}
+  87              	.LCFI2:
+  88              		.cfi_def_cfa_offset 8
+  89              		.cfi_offset 3, -8
+  90              		.cfi_offset 14, -4
+  91              	.LVL5:
+  92              	.L7:
+ 174:Core/Src/freertos.c ****   /* USER CODE BEGIN StartBlink */
+ 175:Core/Src/freertos.c ****   /* Infinite loop */
+ 176:Core/Src/freertos.c ****   for(;;)
+  93              		.loc 1 176 3 is_stmt 1 discriminator 1 view .LVU10
+ 177:Core/Src/freertos.c ****   {
+ 178:Core/Src/freertos.c ****     HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, 0);
+  94              		.loc 1 178 5 discriminator 1 view .LVU11
+  95 0002 0B4C     		ldr	r4, .L9
+  96 0004 0022     		movs	r2, #0
+  97 0006 4FF40051 		mov	r1, #8192
+  98 000a 2046     		mov	r0, r4
+  99 000c FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 100              	.LVL6:
+ 179:Core/Src/freertos.c ****     HAL_Delay(1000);
+ 101              		.loc 1 179 5 discriminator 1 view .LVU12
+ 102 0010 4FF47A70 		mov	r0, #1000
+ 103 0014 FFF7FEFF 		bl	HAL_Delay
+ 104              	.LVL7:
+ 180:Core/Src/freertos.c ****     HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, 1);
+ 105              		.loc 1 180 5 discriminator 1 view .LVU13
+ 106 0018 0122     		movs	r2, #1
+ 107 001a 4FF40051 		mov	r1, #8192
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 6
+
+
+ 108 001e 2046     		mov	r0, r4
+ 109 0020 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 110              	.LVL8:
+ 181:Core/Src/freertos.c ****     HAL_Delay(1000);
+ 111              		.loc 1 181 5 discriminator 1 view .LVU14
+ 112 0024 4FF47A70 		mov	r0, #1000
+ 113 0028 FFF7FEFF 		bl	HAL_Delay
+ 114              	.LVL9:
+ 176:Core/Src/freertos.c ****   {
+ 115              		.loc 1 176 3 discriminator 1 view .LVU15
+ 116 002c E9E7     		b	.L7
+ 117              	.L10:
+ 118 002e 00BF     		.align	2
+ 119              	.L9:
+ 120 0030 00100140 		.word	1073811456
+ 121              		.cfi_endproc
+ 122              	.LFE71:
+ 124              		.section	.text.StartButton,"ax",%progbits
+ 125              		.align	1
+ 126              		.global	StartButton
+ 127              		.syntax unified
+ 128              		.thumb
+ 129              		.thumb_func
+ 131              	StartButton:
+ 132              	.LVL10:
+ 133              	.LFB72:
+ 182:Core/Src/freertos.c ****   }
+ 183:Core/Src/freertos.c ****   /* USER CODE END StartBlink */
+ 184:Core/Src/freertos.c **** }
+ 185:Core/Src/freertos.c **** 
+ 186:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartButton */
+ 187:Core/Src/freertos.c **** /**
+ 188:Core/Src/freertos.c **** * @brief Function implementing the button thread.
+ 189:Core/Src/freertos.c **** * @param argument: Not used
+ 190:Core/Src/freertos.c **** * @retval None
+ 191:Core/Src/freertos.c **** */
+ 192:Core/Src/freertos.c **** /* USER CODE END Header_StartButton */
+ 193:Core/Src/freertos.c **** void StartButton(void *argument)
+ 194:Core/Src/freertos.c **** {
+ 134              		.loc 1 194 1 view -0
+ 135              		.cfi_startproc
+ 136              		@ args = 0, pretend = 0, frame = 0
+ 137              		@ frame_needed = 0, uses_anonymous_args = 0
+ 138              		.loc 1 194 1 is_stmt 0 view .LVU17
+ 139 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 140              	.LCFI3:
+ 141              		.cfi_def_cfa_offset 24
+ 142              		.cfi_offset 3, -24
+ 143              		.cfi_offset 4, -20
+ 144              		.cfi_offset 5, -16
+ 145              		.cfi_offset 6, -12
+ 146              		.cfi_offset 7, -8
+ 147              		.cfi_offset 14, -4
+ 195:Core/Src/freertos.c ****   /* USER CODE BEGIN StartButton */
+ 196:Core/Src/freertos.c ****   int buttonState = 0;           // Estado actual del botón (0 = no presionado, 1 = presionado)
+ 148              		.loc 1 196 3 is_stmt 1 view .LVU18
+ 149              	.LVL11:
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 7
+
+
+ 197:Core/Src/freertos.c ****   int buttonState2 = 0;
+ 150              		.loc 1 197 3 view .LVU19
+ 151              		.loc 1 197 7 is_stmt 0 view .LVU20
+ 152 0002 0026     		movs	r6, #0
+ 196:Core/Src/freertos.c ****   int buttonState2 = 0;
+ 153              		.loc 1 196 7 view .LVU21
+ 154 0004 3746     		mov	r7, r6
+ 155 0006 08E0     		b	.L12
+ 156              	.LVL12:
+ 157              	.L20:
+ 158              	.LBB2:
+ 198:Core/Src/freertos.c ****   /* Infinite loop */
+ 199:Core/Src/freertos.c ****   for(;;)
+ 200:Core/Src/freertos.c ****   {
+ 201:Core/Src/freertos.c **** 
+ 202:Core/Src/freertos.c **** 	int buttonStateCurrent = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4);
+ 203:Core/Src/freertos.c **** 	int buttonStateCurrent2 = HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_5);
+ 204:Core/Src/freertos.c **** 	  // Si el botón ha sido presionado y no estaba presionado previamente
+ 205:Core/Src/freertos.c **** 	if ((buttonStateCurrent == 1 && buttonState == 0) || (buttonStateCurrent2 == 1 && buttonState2 == 
+ 159              		.loc 1 205 31 discriminator 1 view .LVU22
+ 160 0008 9FB9     		cbnz	r7, .L13
+ 161              	.L14:
+ 206:Core/Src/freertos.c **** 	    // Cambiar el estado del botón a 1
+ 207:Core/Src/freertos.c **** 	    buttonState = 1;
+ 162              		.loc 1 207 6 is_stmt 1 view .LVU23
+ 163              	.LVL13:
+ 208:Core/Src/freertos.c **** 	    buttonState2 = 1;
+ 164              		.loc 1 208 6 view .LVU24
+ 209:Core/Src/freertos.c **** 	    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_8, 1);
+ 165              		.loc 1 209 6 view .LVU25
+ 166 000a 0122     		movs	r2, #1
+ 167 000c 4FF48071 		mov	r1, #256
+ 168 0010 1248     		ldr	r0, .L22
+ 169              	.LVL14:
+ 170              		.loc 1 209 6 is_stmt 0 view .LVU26
+ 171 0012 FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 172              	.LVL15:
+ 208:Core/Src/freertos.c **** 	    buttonState2 = 1;
+ 173              		.loc 1 208 19 view .LVU27
+ 174 0016 0126     		movs	r6, #1
+ 207:Core/Src/freertos.c **** 	    buttonState2 = 1;
+ 175              		.loc 1 207 18 view .LVU28
+ 176 0018 3746     		mov	r7, r6
+ 177              	.LVL16:
+ 178              	.L12:
+ 207:Core/Src/freertos.c **** 	    buttonState2 = 1;
+ 179              		.loc 1 207 18 view .LVU29
+ 180              	.LBE2:
+ 199:Core/Src/freertos.c ****   {
+ 181              		.loc 1 199 3 is_stmt 1 view .LVU30
+ 182              	.LBB3:
+ 202:Core/Src/freertos.c **** 	int buttonStateCurrent2 = HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_5);
+ 183              		.loc 1 202 2 view .LVU31
+ 202:Core/Src/freertos.c **** 	int buttonStateCurrent2 = HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_5);
+ 184              		.loc 1 202 27 is_stmt 0 view .LVU32
+ 185 001a 104D     		ldr	r5, .L22
+ 186 001c 1021     		movs	r1, #16
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 8
+
+
+ 187 001e 2846     		mov	r0, r5
+ 188 0020 FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 189              	.LVL17:
+ 190 0024 0446     		mov	r4, r0
+ 191              	.LVL18:
+ 203:Core/Src/freertos.c **** 	  // Si el botón ha sido presionado y no estaba presionado previamente
+ 192              		.loc 1 203 2 is_stmt 1 view .LVU33
+ 203:Core/Src/freertos.c **** 	  // Si el botón ha sido presionado y no estaba presionado previamente
+ 193              		.loc 1 203 28 is_stmt 0 view .LVU34
+ 194 0026 2021     		movs	r1, #32
+ 195 0028 2846     		mov	r0, r5
+ 196              	.LVL19:
+ 203:Core/Src/freertos.c **** 	  // Si el botón ha sido presionado y no estaba presionado previamente
+ 197              		.loc 1 203 28 view .LVU35
+ 198 002a FFF7FEFF 		bl	HAL_GPIO_ReadPin
+ 199              	.LVL20:
+ 205:Core/Src/freertos.c **** 	    // Cambiar el estado del botón a 1
+ 200              		.loc 1 205 2 is_stmt 1 view .LVU36
+ 205:Core/Src/freertos.c **** 	    // Cambiar el estado del botón a 1
+ 201              		.loc 1 205 5 is_stmt 0 view .LVU37
+ 202 002e 012C     		cmp	r4, #1
+ 203 0030 EAD0     		beq	.L20
+ 204              	.L13:
+ 205:Core/Src/freertos.c **** 	    // Cambiar el estado del botón a 1
+ 205              		.loc 1 205 52 discriminator 3 view .LVU38
+ 206 0032 0128     		cmp	r0, #1
+ 207 0034 0ED0     		beq	.L21
+ 208              	.L15:
+ 210:Core/Src/freertos.c **** 	}
+ 211:Core/Src/freertos.c **** 	    // Si el botón está siendo liberado y estaba presionado previamente
+ 212:Core/Src/freertos.c **** 	else if ((buttonStateCurrent == 0 && buttonState == 1) || ((buttonStateCurrent2 == 0 && buttonStat
+ 209              		.loc 1 212 7 is_stmt 1 view .LVU39
+ 210              		.loc 1 212 10 is_stmt 0 view .LVU40
+ 211 0036 04B9     		cbnz	r4, .L17
+ 212              		.loc 1 212 36 discriminator 1 view .LVU41
+ 213 0038 1FB9     		cbnz	r7, .L18
+ 214              	.L17:
+ 215              		.loc 1 212 57 discriminator 3 view .LVU42
+ 216 003a 0028     		cmp	r0, #0
+ 217 003c EDD1     		bne	.L12
+ 218              		.loc 1 212 87 discriminator 4 view .LVU43
+ 219 003e 002E     		cmp	r6, #0
+ 220 0040 EBD0     		beq	.L12
+ 221              	.L18:
+ 213:Core/Src/freertos.c **** 	    // Cambiar el estado del botón a 0
+ 214:Core/Src/freertos.c **** 	    buttonState = 0;
+ 222              		.loc 1 214 6 is_stmt 1 view .LVU44
+ 223              	.LVL21:
+ 215:Core/Src/freertos.c **** 	    buttonState2 = 0;
+ 224              		.loc 1 215 6 view .LVU45
+ 216:Core/Src/freertos.c **** 	    HAL_GPIO_WritePin(GPIOB,GPIO_PIN_8, 0);
+ 225              		.loc 1 216 6 view .LVU46
+ 226 0042 0022     		movs	r2, #0
+ 227 0044 4FF48071 		mov	r1, #256
+ 228 0048 0448     		ldr	r0, .L22
+ 229              	.LVL22:
+ 230              		.loc 1 216 6 is_stmt 0 view .LVU47
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 9
+
+
+ 231 004a FFF7FEFF 		bl	HAL_GPIO_WritePin
+ 232              	.LVL23:
+ 215:Core/Src/freertos.c **** 	    buttonState2 = 0;
+ 233              		.loc 1 215 19 view .LVU48
+ 234 004e 0026     		movs	r6, #0
+ 214:Core/Src/freertos.c **** 	    buttonState2 = 0;
+ 235              		.loc 1 214 18 view .LVU49
+ 236 0050 3746     		mov	r7, r6
+ 237 0052 E2E7     		b	.L12
+ 238              	.LVL24:
+ 239              	.L21:
+ 205:Core/Src/freertos.c **** 	    // Cambiar el estado del botón a 1
+ 240              		.loc 1 205 81 discriminator 4 view .LVU50
+ 241 0054 002E     		cmp	r6, #0
+ 242 0056 EED1     		bne	.L15
+ 243 0058 D7E7     		b	.L14
+ 244              	.L23:
+ 245 005a 00BF     		.align	2
+ 246              	.L22:
+ 247 005c 000C0140 		.word	1073810432
+ 248              	.LBE3:
+ 249              		.cfi_endproc
+ 250              	.LFE72:
+ 252              		.section	.text.StartPot,"ax",%progbits
+ 253              		.align	1
+ 254              		.global	StartPot
+ 255              		.syntax unified
+ 256              		.thumb
+ 257              		.thumb_func
+ 259              	StartPot:
+ 260              	.LFB73:
+ 217:Core/Src/freertos.c **** 	}
+ 218:Core/Src/freertos.c ****   }
+ 219:Core/Src/freertos.c ****   /* USER CODE END StartButton */
+ 220:Core/Src/freertos.c **** }
+ 221:Core/Src/freertos.c **** 
+ 222:Core/Src/freertos.c **** /* USER CODE BEGIN Header_StartPot */
+ 223:Core/Src/freertos.c **** /**
+ 224:Core/Src/freertos.c **** * @brief Function implementing the Potenciometer thread.
+ 225:Core/Src/freertos.c **** * @param argument: Not used
+ 226:Core/Src/freertos.c **** * @retval None
+ 227:Core/Src/freertos.c **** */
+ 228:Core/Src/freertos.c **** /* USER CODE END Header_StartPot */
+ 229:Core/Src/freertos.c **** void StartPot(void *argument)
+ 230:Core/Src/freertos.c **** {
+ 261              		.loc 1 230 1 is_stmt 1 view -0
+ 262              		.cfi_startproc
+ 263              		@ args = 0, pretend = 0, frame = 0
+ 264              		@ frame_needed = 0, uses_anonymous_args = 0
+ 265              	.LVL25:
+ 266              		.loc 1 230 1 is_stmt 0 view .LVU52
+ 267 0000 10B5     		push	{r4, lr}
+ 268              	.LCFI4:
+ 269              		.cfi_def_cfa_offset 8
+ 270              		.cfi_offset 4, -8
+ 271              		.cfi_offset 14, -4
+ 272              	.LVL26:
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 10
+
+
+ 273              	.L25:
+ 231:Core/Src/freertos.c ****   /* USER CODE BEGIN StartPot */
+ 232:Core/Src/freertos.c ****   int readValue = 0;
+ 233:Core/Src/freertos.c ****   /* Infinite loop */
+ 234:Core/Src/freertos.c ****   for(;;)
+ 274              		.loc 1 234 3 is_stmt 1 discriminator 1 view .LVU53
+ 235:Core/Src/freertos.c ****   {
+ 236:Core/Src/freertos.c **** 		HAL_ADC_PollForConversion(&hadc1,1000);
+ 275              		.loc 1 236 3 discriminator 1 view .LVU54
+ 276 0002 054C     		ldr	r4, .L27
+ 277 0004 4FF47A71 		mov	r1, #1000
+ 278 0008 2046     		mov	r0, r4
+ 279 000a FFF7FEFF 		bl	HAL_ADC_PollForConversion
+ 280              	.LVL27:
+ 237:Core/Src/freertos.c **** 		readValue = HAL_ADC_GetValue(&hadc1);
+ 281              		.loc 1 237 3 discriminator 1 view .LVU55
+ 282              		.loc 1 237 15 is_stmt 0 discriminator 1 view .LVU56
+ 283 000e 2046     		mov	r0, r4
+ 284 0010 FFF7FEFF 		bl	HAL_ADC_GetValue
+ 285              	.LVL28:
+ 234:Core/Src/freertos.c ****   {
+ 286              		.loc 1 234 3 is_stmt 1 discriminator 1 view .LVU57
+ 287 0014 F5E7     		b	.L25
+ 288              	.L28:
+ 289 0016 00BF     		.align	2
+ 290              	.L27:
+ 291 0018 00000000 		.word	hadc1
+ 292              		.cfi_endproc
+ 293              	.LFE73:
+ 295              		.section	.text.MX_FREERTOS_Init,"ax",%progbits
+ 296              		.align	1
+ 297              		.global	MX_FREERTOS_Init
+ 298              		.syntax unified
+ 299              		.thumb
+ 300              		.thumb_func
+ 302              	MX_FREERTOS_Init:
+ 303              	.LFB69:
+ 100:Core/Src/freertos.c ****   /* USER CODE BEGIN Init */
+ 304              		.loc 1 100 29 view -0
+ 305              		.cfi_startproc
+ 306              		@ args = 0, pretend = 0, frame = 0
+ 307              		@ frame_needed = 0, uses_anonymous_args = 0
+ 308 0000 08B5     		push	{r3, lr}
+ 309              	.LCFI5:
+ 310              		.cfi_def_cfa_offset 8
+ 311              		.cfi_offset 3, -8
+ 312              		.cfi_offset 14, -4
+ 123:Core/Src/freertos.c **** 
+ 313              		.loc 1 123 3 view .LVU59
+ 123:Core/Src/freertos.c **** 
+ 314              		.loc 1 123 23 is_stmt 0 view .LVU60
+ 315 0002 0E4A     		ldr	r2, .L31
+ 316 0004 0021     		movs	r1, #0
+ 317 0006 0E48     		ldr	r0, .L31+4
+ 318 0008 FFF7FEFF 		bl	osThreadNew
+ 319              	.LVL29:
+ 123:Core/Src/freertos.c **** 
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 11
+
+
+ 320              		.loc 1 123 21 view .LVU61
+ 321 000c 0D4B     		ldr	r3, .L31+8
+ 322 000e 1860     		str	r0, [r3]
+ 126:Core/Src/freertos.c **** 
+ 323              		.loc 1 126 3 is_stmt 1 view .LVU62
+ 126:Core/Src/freertos.c **** 
+ 324              		.loc 1 126 17 is_stmt 0 view .LVU63
+ 325 0010 0D4A     		ldr	r2, .L31+12
+ 326 0012 0021     		movs	r1, #0
+ 327 0014 0D48     		ldr	r0, .L31+16
+ 328 0016 FFF7FEFF 		bl	osThreadNew
+ 329              	.LVL30:
+ 126:Core/Src/freertos.c **** 
+ 330              		.loc 1 126 15 view .LVU64
+ 331 001a 0D4B     		ldr	r3, .L31+20
+ 332 001c 1860     		str	r0, [r3]
+ 129:Core/Src/freertos.c **** 
+ 333              		.loc 1 129 3 is_stmt 1 view .LVU65
+ 129:Core/Src/freertos.c **** 
+ 334              		.loc 1 129 18 is_stmt 0 view .LVU66
+ 335 001e 0D4A     		ldr	r2, .L31+24
+ 336 0020 0021     		movs	r1, #0
+ 337 0022 0D48     		ldr	r0, .L31+28
+ 338 0024 FFF7FEFF 		bl	osThreadNew
+ 339              	.LVL31:
+ 129:Core/Src/freertos.c **** 
+ 340              		.loc 1 129 16 view .LVU67
+ 341 0028 0C4B     		ldr	r3, .L31+32
+ 342 002a 1860     		str	r0, [r3]
+ 132:Core/Src/freertos.c **** 
+ 343              		.loc 1 132 3 is_stmt 1 view .LVU68
+ 132:Core/Src/freertos.c **** 
+ 344              		.loc 1 132 25 is_stmt 0 view .LVU69
+ 345 002c 0C4A     		ldr	r2, .L31+36
+ 346 002e 0021     		movs	r1, #0
+ 347 0030 0C48     		ldr	r0, .L31+40
+ 348 0032 FFF7FEFF 		bl	osThreadNew
+ 349              	.LVL32:
+ 132:Core/Src/freertos.c **** 
+ 350              		.loc 1 132 23 view .LVU70
+ 351 0036 0C4B     		ldr	r3, .L31+44
+ 352 0038 1860     		str	r0, [r3]
+ 142:Core/Src/freertos.c **** 
+ 353              		.loc 1 142 1 view .LVU71
+ 354 003a 08BD     		pop	{r3, pc}
+ 355              	.L32:
+ 356              		.align	2
+ 357              	.L31:
+ 358 003c 00000000 		.word	.LANCHOR0
+ 359 0040 00000000 		.word	StartDefaultTask
+ 360 0044 00000000 		.word	.LANCHOR1
+ 361 0048 00000000 		.word	.LANCHOR2
+ 362 004c 00000000 		.word	StartBlink
+ 363 0050 00000000 		.word	.LANCHOR3
+ 364 0054 00000000 		.word	.LANCHOR4
+ 365 0058 00000000 		.word	StartButton
+ 366 005c 00000000 		.word	.LANCHOR5
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 12
+
+
+ 367 0060 00000000 		.word	.LANCHOR6
+ 368 0064 00000000 		.word	StartPot
+ 369 0068 00000000 		.word	.LANCHOR7
+ 370              		.cfi_endproc
+ 371              	.LFE69:
+ 373              		.global	Potenciometer_attributes
+ 374              		.section	.rodata.str1.4,"aMS",%progbits,1
+ 375              		.align	2
+ 376              	.LC0:
+ 377 0000 506F7465 		.ascii	"Potenciometer\000"
+ 377      6E63696F 
+ 377      6D657465 
+ 377      7200
+ 378              		.global	PotenciometerHandle
+ 379              		.global	button_attributes
+ 380 000e 0000     		.align	2
+ 381              	.LC1:
+ 382 0010 62757474 		.ascii	"button\000"
+ 382      6F6E00
+ 383              		.global	buttonHandle
+ 384              		.global	Blink_attributes
+ 385 0017 00       		.align	2
+ 386              	.LC2:
+ 387 0018 426C696E 		.ascii	"Blink\000"
+ 387      6B00
+ 388              		.global	BlinkHandle
+ 389              		.global	defaultTask_attributes
+ 390 001e 0000     		.align	2
+ 391              	.LC3:
+ 392 0020 64656661 		.ascii	"defaultTask\000"
+ 392      756C7454 
+ 392      61736B00 
+ 393              		.global	defaultTaskHandle
+ 394              		.section	.bss.BlinkHandle,"aw",%nobits
+ 395              		.align	2
+ 396              		.set	.LANCHOR3,. + 0
+ 399              	BlinkHandle:
+ 400 0000 00000000 		.space	4
+ 401              		.section	.bss.PotenciometerHandle,"aw",%nobits
+ 402              		.align	2
+ 403              		.set	.LANCHOR7,. + 0
+ 406              	PotenciometerHandle:
+ 407 0000 00000000 		.space	4
+ 408              		.section	.bss.buttonHandle,"aw",%nobits
+ 409              		.align	2
+ 410              		.set	.LANCHOR5,. + 0
+ 413              	buttonHandle:
+ 414 0000 00000000 		.space	4
+ 415              		.section	.bss.defaultTaskHandle,"aw",%nobits
+ 416              		.align	2
+ 417              		.set	.LANCHOR1,. + 0
+ 420              	defaultTaskHandle:
+ 421 0000 00000000 		.space	4
+ 422              		.section	.rodata.Blink_attributes,"a"
+ 423              		.align	2
+ 424              		.set	.LANCHOR2,. + 0
+ 427              	Blink_attributes:
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 13
+
+
+ 428 0000 18000000 		.word	.LC2
+ 429 0004 00000000 		.space	16
+ 429      00000000 
+ 429      00000000 
+ 429      00000000 
+ 430 0014 00020000 		.word	512
+ 431 0018 08000000 		.word	8
+ 432 001c 00000000 		.space	8
+ 432      00000000 
+ 433              		.section	.rodata.Potenciometer_attributes,"a"
+ 434              		.align	2
+ 435              		.set	.LANCHOR6,. + 0
+ 438              	Potenciometer_attributes:
+ 439 0000 00000000 		.word	.LC0
+ 440 0004 00000000 		.space	16
+ 440      00000000 
+ 440      00000000 
+ 440      00000000 
+ 441 0014 00020000 		.word	512
+ 442 0018 09000000 		.word	9
+ 443 001c 00000000 		.space	8
+ 443      00000000 
+ 444              		.section	.rodata.button_attributes,"a"
+ 445              		.align	2
+ 446              		.set	.LANCHOR4,. + 0
+ 449              	button_attributes:
+ 450 0000 10000000 		.word	.LC1
+ 451 0004 00000000 		.space	16
+ 451      00000000 
+ 451      00000000 
+ 451      00000000 
+ 452 0014 00020000 		.word	512
+ 453 0018 09000000 		.word	9
+ 454 001c 00000000 		.space	8
+ 454      00000000 
+ 455              		.section	.rodata.defaultTask_attributes,"a"
+ 456              		.align	2
+ 457              		.set	.LANCHOR0,. + 0
+ 460              	defaultTask_attributes:
+ 461 0000 20000000 		.word	.LC3
+ 462 0004 00000000 		.space	16
+ 462      00000000 
+ 462      00000000 
+ 462      00000000 
+ 463 0014 00020000 		.word	512
+ 464 0018 08000000 		.word	8
+ 465 001c 00000000 		.space	8
+ 465      00000000 
+ 466              		.text
+ 467              	.Letext0:
+ 468              		.file 2 "c:\\compilers\\arm-none-eabi\\11.2_2022.02\\arm-none-eabi\\include\\machine\\_default_typ
+ 469              		.file 3 "c:\\compilers\\arm-none-eabi\\11.2_2022.02\\arm-none-eabi\\include\\sys\\_stdint.h"
+ 470              		.file 4 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f103xb.h"
+ 471              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h"
+ 472              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
+ 473              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
+ 474              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 14
+
+
+ 475              		.file 9 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_adc.h"
+ 476              		.file 10 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_uart.h"
+ 477              		.file 11 "Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h"
+ 478              		.file 12 "Core/Inc/adc.h"
+ 479              		.file 13 "Core/Inc/usart.h"
+ 480              		.file 14 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal.h"
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s 			page 15
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 freertos.c
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:18     .text.StartDefaultTask:00000000 $t
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:24     .text.StartDefaultTask:00000000 StartDefaultTask
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:66     .text.StartDefaultTask:00000024 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:71     .text.StartBlink:00000000 $t
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:77     .text.StartBlink:00000000 StartBlink
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:120    .text.StartBlink:00000030 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:125    .text.StartButton:00000000 $t
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:131    .text.StartButton:00000000 StartButton
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:247    .text.StartButton:0000005c $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:253    .text.StartPot:00000000 $t
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:259    .text.StartPot:00000000 StartPot
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:291    .text.StartPot:00000018 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:296    .text.MX_FREERTOS_Init:00000000 $t
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:302    .text.MX_FREERTOS_Init:00000000 MX_FREERTOS_Init
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:358    .text.MX_FREERTOS_Init:0000003c $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:438    .rodata.Potenciometer_attributes:00000000 Potenciometer_attributes
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:375    .rodata.str1.4:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:406    .bss.PotenciometerHandle:00000000 PotenciometerHandle
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:449    .rodata.button_attributes:00000000 button_attributes
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:413    .bss.buttonHandle:00000000 buttonHandle
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:427    .rodata.Blink_attributes:00000000 Blink_attributes
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:399    .bss.BlinkHandle:00000000 BlinkHandle
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:460    .rodata.defaultTask_attributes:00000000 defaultTask_attributes
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:420    .bss.defaultTaskHandle:00000000 defaultTaskHandle
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:395    .bss.BlinkHandle:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:402    .bss.PotenciometerHandle:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:409    .bss.buttonHandle:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:416    .bss.defaultTaskHandle:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:423    .rodata.Blink_attributes:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:434    .rodata.Potenciometer_attributes:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:445    .rodata.button_attributes:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\ccG06pXf.s:456    .rodata.defaultTask_attributes:00000000 $d
+
+UNDEFINED SYMBOLS
+HAL_UART_Transmit
+huart1
+HAL_GPIO_WritePin
+HAL_Delay
+HAL_GPIO_ReadPin
+HAL_ADC_PollForConversion
+HAL_ADC_GetValue
+hadc1
+osThreadNew

@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "cmsis_os.h"
 #include "adc.h"
 #include "dma.h"
 #include "usart.h"
@@ -35,8 +36,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define DEBOUNCE_TIME_MS 20   // Tiempo de debounce en milisegundos
-#define SAMPLE_TIME_MS 5      // Tiempo de muestreo en milisegundos
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -48,15 +47,11 @@
 
 /* USER CODE BEGIN PV */
 
-int test = 0;
-int readValue;
-int buttonState = 0;           // Estado actual del botón (0 = no presionado, 1 = presionado)
-int buttonState2 = 0;
-
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
+void MX_FREERTOS_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -102,48 +97,18 @@ int main(void)
 
   /* USER CODE END 2 */
 
+  /* Init scheduler */
+  osKernelInitialize();  /* Call init function for freertos objects (in freertos.c) */
+  MX_FREERTOS_Init();
+
+  /* Start scheduler */
+  osKernelStart();
+
+  /* We should never get here as control is now taken by the scheduler */
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-
   while (1)
   {
-	 test = test + 1;
-	 char val;
-	 char val2;
-	 long result;
-
-	HAL_ADC_PollForConversion(&hadc1,1000);
-	readValue = HAL_ADC_GetValue(&hadc1);
-	val = (readValue & 0x0F00) >> 8;
-	val2 = (readValue & 0x00FF);
-
-	HAL_UART_Transmit(&huart1,&val,1,100);
-	HAL_UART_Transmit(&huart1,&val2,1,100);
-
-	int buttonStateCurrent = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_4);
-	int buttonStateCurrent2 = HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_5);
-
-	    // Si el botón ha sido presionado y no estaba presionado previamente
-	if ((buttonStateCurrent == 0 && buttonState == 0) || (buttonStateCurrent2 == 0 && buttonState2 == 0)) {
-	    // Cambiar el estado del botón a 1
-	    buttonState = 1;
-	    buttonState2 = 1;
-	    HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, 1);
-	}
-	    // Si el botón está siendo liberado y estaba presionado previamente
-	else if ((buttonStateCurrent == 1 && buttonState == 1) || ((buttonStateCurrent2 == 1 && buttonState2 == 1))) {
-	    // Cambiar el estado del botón a 0
-	    buttonState = 0;
-	    buttonState2 = 0;
-	    HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, 0);
-	}
-
-
-    //HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, 0);
-    //HAL_Delay(1000);
-	//HAL_GPIO_WritePin(GPIOC,GPIO_PIN_13, 1);
-	//HAL_Delay(1000);
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

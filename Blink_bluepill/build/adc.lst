@@ -1,4 +1,4 @@
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 1
 
 
    1              		.cpu cortex-m3
@@ -58,7 +58,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
   30:Core/Src/adc.c **** /* ADC1 init function */
   31:Core/Src/adc.c **** void MX_ADC1_Init(void)
   32:Core/Src/adc.c **** {
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 2
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 2
 
 
   27              		.loc 1 32 1 view -0
@@ -118,7 +118,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
   51:Core/Src/adc.c ****   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   63              		.loc 1 51 3 is_stmt 1 view .LVU13
   64              		.loc 1 51 24 is_stmt 0 view .LVU14
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 3
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 3
 
 
   65 0020 4360     		str	r3, [r0, #4]
@@ -178,7 +178,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
   99              	.LCFI2:
  100              		.cfi_remember_state
  101              		.cfi_def_cfa_offset 4
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 4
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 4
 
 
  102              		@ sp needed
@@ -238,7 +238,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  151 0006 0293     		str	r3, [sp, #8]
  152 0008 0393     		str	r3, [sp, #12]
  153 000a 0493     		str	r3, [sp, #16]
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 5
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 5
 
 
  154 000c 0593     		str	r3, [sp, #20]
@@ -285,7 +285,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  108:Core/Src/adc.c ****     __HAL_LINKDMA(adcHandle,DMA_Handle,hdma_adc1);
  109:Core/Src/adc.c **** 
  110:Core/Src/adc.c ****     /* ADC1 interrupt Init */
- 111:Core/Src/adc.c ****     HAL_NVIC_SetPriority(ADC1_2_IRQn, 0, 0);
+ 111:Core/Src/adc.c ****     HAL_NVIC_SetPriority(ADC1_2_IRQn, 5, 0);
  112:Core/Src/adc.c ****     HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
  113:Core/Src/adc.c ****   /* USER CODE BEGIN ADC1_MspInit 1 */
  114:Core/Src/adc.c **** 
@@ -298,7 +298,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  167              		.cfi_remember_state
  168              		.cfi_def_cfa_offset 8
  169              		@ sp needed
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 6
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 6
 
 
  170 0018 10BD     		pop	{r4, pc}
@@ -358,7 +358,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  210 0044 0223     		movs	r3, #2
  211 0046 0293     		str	r3, [sp, #8]
   90:Core/Src/adc.c ****     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 7
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 7
 
 
  212              		.loc 1 90 5 is_stmt 1 view .LVU56
@@ -418,7 +418,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  249 0070 2022     		movs	r2, #32
  250 0072 8261     		str	r2, [r0, #24]
  102:Core/Src/adc.c ****     if (HAL_DMA_Init(&hdma_adc1) != HAL_OK)
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 8
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 8
 
 
  251              		.loc 1 102 5 is_stmt 1 view .LVU74
@@ -449,7 +449,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  111:Core/Src/adc.c ****     HAL_NVIC_EnableIRQ(ADC1_2_IRQn);
  268              		.loc 1 111 5 view .LVU83
  269 0082 0022     		movs	r2, #0
- 270 0084 1146     		mov	r1, r2
+ 270 0084 0521     		movs	r1, #5
  271 0086 1220     		movs	r0, #18
  272 0088 FFF7FEFF 		bl	HAL_NVIC_SetPriority
  273              	.LVL10:
@@ -478,7 +478,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  295              		.section	.text.HAL_ADC_MspDeInit,"ax",%progbits
  296              		.align	1
  297              		.global	HAL_ADC_MspDeInit
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 9
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 9
 
 
  298              		.syntax unified
@@ -538,7 +538,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  336              	.LVL15:
  134:Core/Src/adc.c **** 
  135:Core/Src/adc.c ****     /* ADC1 DMA DeInit */
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 10
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 10
 
 
  136:Core/Src/adc.c ****     HAL_DMA_DeInit(adcHandle->DMA_Handle);
@@ -598,7 +598,7 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  379              		.file 5 "Drivers/CMSIS/Device/ST/STM32F1xx/Include/stm32f1xx.h"
  380              		.file 6 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_def.h"
  381              		.file 7 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_gpio.h"
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 11
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 11
 
 
  382              		.file 8 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_dma.h"
@@ -606,24 +606,24 @@ ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 1
  384              		.file 10 "Core/Inc/adc.h"
  385              		.file 11 "Drivers/STM32F1xx_HAL_Driver/Inc/stm32f1xx_hal_cortex.h"
  386              		.file 12 "Core/Inc/main.h"
-ARM GAS  C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s 			page 12
+ARM GAS  C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s 			page 12
 
 
 DEFINED SYMBOLS
                             *ABS*:00000000 adc.c
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:18     .text.MX_ADC1_Init:00000000 $t
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:24     .text.MX_ADC1_Init:00000000 MX_ADC1_Init
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:120    .text.MX_ADC1_Init:00000054 $d
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:126    .text.HAL_ADC_MspInit:00000000 $t
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:132    .text.HAL_ADC_MspInit:00000000 HAL_ADC_MspInit
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:288    .text.HAL_ADC_MspInit:0000009c $d
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:296    .text.HAL_ADC_MspDeInit:00000000 $t
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:302    .text.HAL_ADC_MspDeInit:00000000 HAL_ADC_MspDeInit
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:352    .text.HAL_ADC_MspDeInit:00000030 $d
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:372    .bss.hdma_adc1:00000000 hdma_adc1
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:365    .bss.hadc1:00000000 hadc1
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:361    .bss.hadc1:00000000 $d
-C:\Users\lermar\AppData\Local\Temp\ccowFGZ4.s:368    .bss.hdma_adc1:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:18     .text.MX_ADC1_Init:00000000 $t
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:24     .text.MX_ADC1_Init:00000000 MX_ADC1_Init
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:120    .text.MX_ADC1_Init:00000054 $d
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:126    .text.HAL_ADC_MspInit:00000000 $t
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:132    .text.HAL_ADC_MspInit:00000000 HAL_ADC_MspInit
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:288    .text.HAL_ADC_MspInit:0000009c $d
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:296    .text.HAL_ADC_MspDeInit:00000000 $t
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:302    .text.HAL_ADC_MspDeInit:00000000 HAL_ADC_MspDeInit
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:352    .text.HAL_ADC_MspDeInit:00000030 $d
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:372    .bss.hdma_adc1:00000000 hdma_adc1
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:365    .bss.hadc1:00000000 hadc1
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:361    .bss.hadc1:00000000 $d
+C:\Users\lermar\AppData\Local\Temp\cccuXoUV.s:368    .bss.hdma_adc1:00000000 $d
 
 UNDEFINED SYMBOLS
 HAL_ADC_Init
